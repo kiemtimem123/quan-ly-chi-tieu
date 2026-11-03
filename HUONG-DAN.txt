@@ -1,0 +1,11 @@
+TẠO FILE APK (không cần cài Android Studio)
+
+1. Đăng ký/đăng nhập github.com (miễn phí) -> New repository -> đặt tên "so-6-hu".
+2. Bấm "uploading an existing file", kéo thả TOÀN BỘ nội dung thư mục này
+   (gồm cả thư mục .github, www và các file package.json, capacitor.config.json) -> Commit.
+   Lưu ý: thư mục .github bị ẩn trên một số máy; nếu không kéo được, vào
+   Add file > Create new file, gõ tên ".github/workflows/build-apk.yml" rồi dán nội dung file đó.
+3. Vào tab Actions -> "Build APK" -> Run workflow. Đợi khoảng 5-8 phút.
+4. Mở lần chạy đã xong -> mục Artifacts -> tải "so-6-hu-apk" (file zip chứa app-debug.apk).
+5. Chép app-debug.apk sang điện thoại, mở lên và cài. Android sẽ hỏi cho phép
+   "Cài ứng dụng từ nguồn không xác định" -> bật cho trình duyệt/trình quản lý file đang dùng.

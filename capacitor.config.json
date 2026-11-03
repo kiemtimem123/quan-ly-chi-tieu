@@ -1,0 +1,7 @@
+{
+  "appId": "vn.so6hu.app",
+  "appName": "Sổ 6 Hũ",
+  "webDir": "www",
+  "backgroundColor": "#F2F4F9",
+  "android": { "allowMixedContent": false }
+}
