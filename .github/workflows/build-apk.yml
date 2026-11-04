@@ -15,6 +15,11 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
+      - name: Gom file web vao www
+        run: |
+          mkdir -p www
+          cp index.html fonts.css *.woff2 *.png manifest.webmanifest www/
+          ls www | head -30
       - run: npm install
       - run: npx cap add android
       - name: Chep icon app
