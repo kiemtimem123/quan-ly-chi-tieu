@@ -45,6 +45,8 @@ button,input,select{font:inherit;color:inherit}
 button{cursor:pointer;border:0;background:none;padding:0}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:8px}
 h1,h2,h3,p{margin:0}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+.summary,.sheet,.bars,.stack,.f,.split,.list,.home-grid,.fix{grid-template-columns:minmax(0,1fr)}
 
 .shell{display:grid;grid-template-columns:minmax(0,1fr);max-width:1180px;margin:0 auto}
 main{min-width:0;padding-block:18px 150px}
@@ -62,8 +64,8 @@ main{min-width:0;padding-block:18px 150px}
 .summary .lbl{font-size:13px;color:var(--muted);font-weight:500}
 .summary .big{font-size:32px;font-weight:800;letter-spacing:-.025em;line-height:1.1}
 .stats3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
-.stats3 div{background:var(--surface2);border-radius:12px;padding:10px 9px;min-width:0}
-.stats3 b{display:block;font-size:13.5px;font-weight:700;white-space:nowrap}
+.stats3 div{background:var(--surface2);border-radius:12px;padding:10px 7px;min-width:0}
+.stats3 b{display:block;font-size:clamp(10.5px,3vw,13px);font-weight:700;overflow-wrap:anywhere}
 .stats3 span{font-size:12px;color:var(--muted)}
 .seg{display:flex;gap:4px;height:10px}
 .seg i{display:block;border-radius:99px;background:var(--surface2);overflow:hidden;position:relative}
@@ -78,11 +80,18 @@ main{min-width:0;padding-block:18px 150px}
 .jar{display:flex;flex-direction:column;align-items:center;text-align:center;gap:2px;padding:12px 6px 12px;border-radius:16px;background:var(--surface);border:1px solid var(--line);position:relative;min-width:0;transition:transform .12s}
 .jar:active{transform:scale(.97)}
 .jar .pc{position:absolute;top:8px;left:8px;font-size:11px;font-weight:700;padding:2px 7px;border-radius:99px;background:var(--accent-soft);color:var(--accent)}
-.jar svg{margin-top:12px;margin-bottom:4px}
+.jw{position:relative;margin:14px 0 4px;width:58px;height:74px}
+.jw svg{display:block;overflow:visible}
+.jw .em{position:absolute;left:0;right:0;top:36px;text-align:center;font-size:19px;line-height:1;filter:drop-shadow(0 1px 1px rgba(0,0,0,.3));pointer-events:none}
+.lq{transition:transform 1.1s cubic-bezier(.25,.8,.25,1),opacity .4s}
+.wv{animation:wave 2.6s linear infinite}
+@keyframes wave{from{transform:translateX(-48px)}to{transform:translateX(0)}}
 .jar .nm{font-size:12.5px;font-weight:600;color:var(--muted);line-height:1.25;min-height:2.5em;display:flex;align-items:center}
 .jar .bal{font-size:14px;font-weight:800;letter-spacing:-.01em;overflow-wrap:anywhere}
 .jar .bal.neg{color:var(--bad)}
-.jar .sp{font-size:11px;color:var(--muted)}
+.jar .sp{font-size:11px;color:var(--muted);display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+.sp .p{color:var(--good);font-weight:700}.sp .m{color:var(--bad);font-weight:700}
+.lvl{display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--muted)}.lvl .track{flex:1}
 
 .list{display:grid}
 .row{display:flex;align-items:center;gap:12px;padding:12px 14px;border-top:1px solid var(--line);min-width:0}
@@ -156,6 +165,19 @@ nav button[aria-current="page"]{color:var(--accent)}
 .col .pair .i1{background:var(--line)}
 .col .pair .i2{background:var(--accent)}
 .col span{font-size:11.5px;color:var(--muted);font-weight:600}
+.chartc{padding:12px 8px 8px}.chartc svg{display:block;width:100%;height:auto}
+.chartc .ttl{padding:0 8px 6px}.chartc .ttl b{display:block;font-size:15px}.chartc .ttl span{font-size:12.5px;color:var(--muted)}
+.chip i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;background:var(--c)}
+.chip[aria-pressed=false] i{opacity:.35}
+.chip[aria-pressed=true] i{box-shadow:0 0 0 2px #fff}
+.tbl{overflow-x:auto;border-radius:18px}
+.tbl table{border-collapse:separate;border-spacing:0;width:100%;min-width:620px;font-size:12.5px}
+.tbl th,.tbl td{padding:9px 8px;text-align:right;white-space:nowrap;border-top:1px solid var(--line)}
+.tbl thead th{border-top:0;font-weight:700;color:var(--muted);font-size:12px;vertical-align:bottom}
+.tbl th:first-child,.tbl td:first-child{text-align:left;position:sticky;left:0;background:var(--surface);font-weight:700;z-index:1}
+.tbl tfoot td{font-weight:800;background:var(--surface2)}
+.tbl tfoot td:first-child{background:var(--surface2)}
+.tbl .pos{color:var(--good)}.tbl .neg{color:var(--bad)}.tbl .zero{color:var(--muted);opacity:.6}
 .legend{display:flex;gap:16px;font-size:12.5px;color:var(--muted);padding:10px 16px 16px}
 .legend b{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
 
@@ -236,7 +258,7 @@ function load(){
 var S=load();
 function save(){mem=clone(S);try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 
-var ui={view:'home',month:null,filter:'all',sheet:null,del:null,resetStep:0,installEvt:null};
+var ui={rng:'6m',gj:'tiet-kiem',hid:{},sumMode:'month',sumYear:null,sumMetric:'net',prev:{},view:'home',month:null,filter:'all',sheet:null,del:null,resetStep:0,installEvt:null};
 function pad(n){return n<10?'0'+n:''+n}
 function today(){var d=new Date();return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())}
 function mk(date){return date.slice(0,7)}
@@ -245,7 +267,7 @@ function shift(m,k){var y=+m.slice(0,4),mo=+m.slice(5,7)-1+k;y+=Math.floor(mo/12
 function mlabel(m){return 'Tháng '+(+m.slice(5,7))+'/'+m.slice(0,4)}
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]})}
 function fmt(n){return new Intl.NumberFormat('vi-VN').format(Math.round(n))+'đ'}
-function short(n){var a=Math.abs(n);if(a>=1e6)return (n/1e6).toFixed(a>=1e7?0:1).replace('.0','')+'tr';if(a>=1e3)return Math.round(n/1e3)+'k';return ''+Math.round(n)}
+function short(n){var a=Math.abs(n);if(a>=1e6)return (n/1e6).toFixed(a>=1e7?0:1).replace('.0','').replace('.',',')+'tr';if(a>=1e3)return Math.round(n/1e3)+'k';return ''+Math.round(n)}
 function jar(id){for(var i=0;i<S.jars.length;i++)if(S.jars[i].id===id)return S.jars[i];return {id:id,name:'Khác',icon:'•',color:'#888',pct:0}}
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
 function daysIn(m){return new Date(+m.slice(0,4),+m.slice(5,7),0).getDate()}
@@ -264,7 +286,7 @@ function split(amount){
 
 function jarStats(m){
   var res={};
-  S.jars.forEach(function(j){res[j.id]={opening:0,inc:0,spent:0}});
+  S.jars.forEach(function(j){res[j.id]={opening:0,inc:0,spent:0,tin:0,tout:0}});
   S.tx.forEach(function(t){
     var tm=mk(t.date),cur=tm===m,before=tm<m&&S.carry;
     if(!cur&&!before)return;
@@ -273,13 +295,16 @@ function jarStats(m){
         if(!res[id])return;
         if(cur)res[id].inc+=t.split[id];else res[id].opening+=t.split[id];
       });
+    }else if(t.type==='transfer'){
+      if(res[t.to]){if(cur)res[t.to].tin+=t.amount;else res[t.to].opening+=t.amount}
+      if(res[t.from]){if(cur)res[t.from].tout+=t.amount;else res[t.from].opening-=t.amount}
     }else if(res[t.jar]){
       if(cur)res[t.jar].spent+=t.amount;else res[t.jar].opening-=t.amount;
     }
   });
   var tot={inc:0,spent:0,bal:0,avail:0};
   Object.keys(res).forEach(function(id){
-    var r=res[id];r.avail=r.opening+r.inc;r.bal=r.avail-r.spent;
+    var r=res[id];r.avail=r.opening+r.inc+r.tin-r.tout;r.bal=r.avail-r.spent;
     tot.inc+=r.inc;tot.spent+=r.spent;tot.bal+=r.bal;tot.avail+=Math.max(0,r.avail);
   });
   return {j:res,t:tot};
@@ -287,17 +312,38 @@ function jarStats(m){
 function monthIncome(m){var s=0;S.tx.forEach(function(t){if(t.type==='income'&&mk(t.date)===m)s+=t.amount});return s}
 function monthTx(m){return S.tx.filter(function(t){return mk(t.date)===m}).sort(function(a,b){return a.date<b.date?1:a.date>b.date?-1:(a.id<b.id?1:-1)})}
 
+function refIncome(){
+  if(S.ref>0)return S.ref;
+  var by={},mx=0;
+  S.tx.forEach(function(t){if(t.type==='income'&&!t.target){var m=mk(t.date);by[m]=(by[m]||0)+t.amount}});
+  for(var k in by)mx=Math.max(mx,by[k]);
+  return mx||1;
+}
+function jarLevel(j,bal){
+  var P=0;S.jars.forEach(function(x){P+=Math.max(0,+x.pct||0)});
+  var cap=refIncome()*(P>0?Math.max(0,+j.pct||0)/P:1/S.jars.length);
+  if(cap<=0)return bal>0?1:0;
+  return Math.max(0,Math.min(1,bal/cap));
+}
 var uidc=0;
-function jarSVG(color,ratio){
-  var r=Math.max(0,Math.min(1,ratio)),y=60-39*r,id='cp'+(++uidc);
-  var body='M14 20h20v3c7 3 10 8 10 15v12c0 5.5-4.5 10-10 10H14C8.5 60 4 55.5 4 50V38c0-7 3-12 10-15z';
-  return '<svg viewBox="0 0 48 64" width="46" height="60" aria-hidden="true"><defs><clipPath id="'+id+'"><path d="'+body+'"/></clipPath></defs>'+
-   '<rect x="13" y="3" width="22" height="9" rx="3" fill="var(--jar-lid)"/>'+
-   '<rect x="16" y="11" width="16" height="10" fill="var(--jar-glass)" stroke="var(--jar-edge)" stroke-width="1.5"/>'+
-   '<g clip-path="url(#'+id+')"><rect width="48" height="64" fill="var(--jar-glass)"/>'+
-   (r>0?'<rect x="0" y="'+y+'" width="48" height="'+(64-y)+'" fill="'+color+'"/><ellipse cx="24" cy="'+y+'" rx="22" ry="2.2" fill="'+color+'" opacity=".55"/>':'')+
-   '<rect x="9" y="30" width="3" height="18" rx="1.5" fill="#fff" opacity=".35"/></g>'+
-   '<path d="'+body+'" fill="none" stroke="var(--jar-edge)" stroke-width="1.5"/></svg>';
+function jarSVG(color,r0,r1){
+  var id='cp'+(++uidc);
+  var body='M17 18H41C45 18 46 20 47 24C50 28 52 32 52 38V60C52 67 47 72 40 72H18C11 72 6 67 6 60V38C6 32 8 28 11 24C12 20 13 18 17 18Z';
+  var o0=((1-r0)*48).toFixed(1),o1=((1-r1)*48).toFixed(1);
+  return '<svg viewBox="0 0 58 74" width="58" height="74" aria-hidden="true"><defs><clipPath id="'+id+'"><path d="'+body+'"/></clipPath></defs>'+
+   '<rect x="14" y="2" width="30" height="11" rx="3.5" fill="var(--jar-lid)"/><rect x="14" y="6" width="30" height="1.6" fill="#000" opacity=".12"/>'+
+   '<rect x="17" y="12" width="24" height="7" fill="var(--jar-glass)" stroke="var(--jar-edge)" stroke-width="1.5"/>'+
+   '<g clip-path="url(#'+id+')"><rect width="58" height="74" fill="var(--jar-glass)"/>'+
+   '<g class="lq" data-to="'+o1+'" data-op="'+(r1>0.005?1:0)+'" style="transform:translateY('+o0+'px);opacity:'+(r0>0.005?1:0)+'">'+
+   '<g class="wv"><path d="M-48 24q12-3.500 24 0t24 0 24 0 24 0 24 0 24 0V100H-48Z" fill="'+color+'"/><path d="M-48 24q12-3.500 24 0t24 0 24 0 24 0 24 0 24 0" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="1"/></g></g>'+
+   '<path d="M40 36h6M42 48h4M40 60h6" stroke="var(--jar-edge)" stroke-width="1.2" stroke-linecap="round"/>'+
+   '<rect x="11" y="32" width="4" height="26" rx="2" fill="#fff" opacity=".4"/></g>'+
+   '<path d="'+body+'" fill="none" stroke="var(--jar-edge)" stroke-width="1.8"/></svg>';
+}
+function animateJars(){
+  requestAnimationFrame(function(){requestAnimationFrame(function(){
+    [].forEach.call(document.querySelectorAll('.lq[data-to]'),function(g){g.style.transform='translateY('+g.dataset.to+'px)';g.style.opacity=g.dataset.op});
+  })});
 }
 
 /* ---------- views ---------- */
@@ -336,13 +382,13 @@ function viewHome(){
    '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px"><div><div class="lbl">Thu nhập '+mlabel(ui.month).toLowerCase()+'</div><div class="big">'+fmt(inc)+'</div></div><span class="pill">'+daysLeft()+'</span></div>'+
    '<div class="seg" aria-hidden="true">'+segs+'</div>'+
    '<div class="stats3"><div><span>Đã chi</span><b>'+fmt(st.t.spent)+'</b></div><div><span>Còn trong '+S.jars.length+' hũ</span><b>'+fmt(st.t.bal)+'</b></div><div><span>Đã dùng</span><b>'+(st.t.avail>0?Math.round(st.t.spent/st.t.avail*100):0)+'%</b></div></div>'+
-   (inc>0?'<p class="hint">Đã chia hết vào '+S.jars.length+' hũ. Chạm một hũ để ghi chi tiêu.</p>':'<p class="hint">Chưa có thu nhập trong tháng này. Ghi khoản thu để app tự chia vào các hũ.</p>')+
+   (inc>0?'<p class="hint">Đã chia hết vào '+S.jars.length+' hũ. Chạm vào hũ để xem chi tiết, nạp hoặc chi tiền.</p>':'<p class="hint">Chưa có thu nhập trong tháng này. Ghi khoản thu để app tự chia vào các hũ.</p>')+
   '</section>';
   var jars='<div class="sec"><h2>'+S.jars.length+' hũ của bạn</h2><button data-a="nav" data-v="set">Chỉnh tỷ lệ</button></div><div class="jars">'+
    S.jars.map(function(j){
-    var s=st.j[j.id],f=s.avail>0?s.bal/s.avail:0;
-    return '<button class="jar" data-a="add" data-jar="'+j.id+'" aria-label="'+esc(j.name)+', còn '+fmt(s.bal)+'"><span class="pc">'+j.pct+'%</span>'+jarSVG(j.color,f)+
-      '<span class="nm">'+esc(j.name)+'</span><span class="bal'+(s.bal<0?' neg':'')+'">'+fmt(s.bal)+'</span><span class="sp">Chi '+short(s.spent)+'</span></button>';
+    var s=st.j[j.id],r1=jarLevel(j,s.bal),r0=ui.prev[j.id];if(r0==null)r0=0;ui.prev[j.id]=r1;
+    return '<button class="jar" data-a="jar" data-jar="'+j.id+'" aria-label="'+esc(j.name)+', còn '+fmt(s.bal)+'"><span class="pc">'+j.pct+'%</span><div class="jw">'+jarSVG(j.color,r0,r1)+'<span class="em">'+esc(j.icon)+'</span></div>'+
+      '<span class="nm">'+esc(j.name)+'</span><span class="bal'+(s.bal<0?' neg':'')+'">'+fmt(s.bal)+'</span><span class="sp"><span class="p">+'+short(s.inc+s.tin)+'</span><span class="m">−'+short(s.spent+s.tout)+'</span></span></button>';
    }).join('')+'</div>';
   var recent=monthTx(ui.month).slice(0,6);
   var rec='<div class="sec"><h2>Gần đây</h2><button data-a="nav" data-v="hist">Xem tất cả</button></div>'+
@@ -357,18 +403,24 @@ function dlabel(d){
   var y=new Date();y.setDate(y.getDate()-1);var ys=y.getFullYear()+'-'+pad(y.getMonth()+1)+'-'+pad(y.getDate());
   if(d===ys)return 'Hôm qua';return d.slice(8)+'/'+d.slice(5,7);
 }
+function txRowX(t){
+  var f=jar(t.from),to=jar(t.to);
+  return '<div class="row"><div class="ico" style="background:var(--surface2)">⇄</div><div class="tx"><b>'+esc(t.note||'Chuyển hũ')+'</b><span>'+esc(f.icon)+' '+esc(f.name)+' → '+esc(to.icon)+' '+esc(to.name)+' · '+dlabel(t.date)+'</span></div><div class="amt">'+fmt(t.amount)+'</div><button class="x" data-a="del" data-id="'+t.id+'" aria-label="Xóa giao dịch">×</button></div>';
+}
 function txRow(t){
+  if(t.type==='transfer')return txRowX(t);
   var inc=t.type==='income',j=inc?null:jar(t.jar);
   return '<div class="row"><div class="ico" style="'+(inc?'background:color-mix(in srgb,var(--good) 18%,transparent)':'')+'">'+(inc?'💵':j.icon)+'</div>'+
-   '<div class="tx"><b>'+esc(t.note||(inc?'Thu nhập':j.name))+'</b><span>'+(inc?'Chia vào '+S.jars.length+' hũ':esc(j.name))+' · '+dlabel(t.date)+'</span></div>'+
+   '<div class="tx"><b>'+esc(t.note||(inc?'Thu nhập':j.name))+'</b><span>'+(inc?(t.target?'Nạp vào '+esc(jar(t.target).name):'Chia vào '+S.jars.length+' hũ'):esc(j.name))+' · '+dlabel(t.date)+'</span></div>'+
    '<div class="amt'+(inc?' in':'')+'">'+(inc?'+':'−')+fmt(t.amount)+'</div>'+
    '<button class="x" data-a="del" data-id="'+t.id+'" aria-label="Xóa giao dịch">×</button></div>';
 }
 function viewHist(){
   var list=monthTx(ui.month);
   if(ui.filter==='income')list=list.filter(function(t){return t.type==='income'});
-  else if(ui.filter!=='all')list=list.filter(function(t){return t.jar===ui.filter});
-  var chips='<div class="chips">'+[['all','Tất cả'],['income','Thu nhập']].concat(S.jars.map(function(j){return [j.id,j.icon+' '+j.name]})).map(function(c){
+  else if(ui.filter==='transfer')list=list.filter(function(t){return t.type==='transfer'});
+  else if(ui.filter!=='all')list=list.filter(function(t){return t.jar===ui.filter||t.from===ui.filter||t.to===ui.filter});
+  var chips='<div class="chips">'+[['all','Tất cả'],['income','Thu nhập'],['transfer','Chuyển hũ']].concat(S.jars.map(function(j){return [j.id,j.icon+' '+j.name]})).map(function(c){
     return '<button class="chip" data-a="flt" data-f="'+c[0]+'" aria-pressed="'+(ui.filter===c[0])+'">'+esc(c[1])+'</button>';
   }).join('')+'</div>';
   var out='',last='';
@@ -379,6 +431,144 @@ function viewHist(){
   if(last)out+='</div>';
   if(!list.length)out='<div class="card empty"><h3>Không có giao dịch</h3><p>Chưa có giao dịch nào phù hợp trong '+mlabel(ui.month).toLowerCase()+'.</p></div>';
   return topbar()+'<h1 class="view-title">Giao dịch</h1>'+chips+out;
+}
+function aggAll(){
+  var a={};
+  S.tx.forEach(function(t){
+    var ym=mk(t.date);a[ym]=a[ym]||{};
+    function c(id){return a[ym][id]||(a[ym][id]={i:0,o:0,ti:0,to:0})}
+    if(t.type==='income')Object.keys(t.split||{}).forEach(function(id){c(id).i+=t.split[id]});
+    else if(t.type==='transfer'){c(t.to).ti+=t.amount;c(t.from).to+=t.amount}
+    else c(t.jar).o+=t.amount;
+  });
+  return a;
+}
+function pval(a,period,id,metric){
+  var i=0,o=0,ti=0,to=0,L=period.length;
+  Object.keys(a).forEach(function(ym){
+    var c=a[ym][id];if(!c)return;
+    var inP=ym.slice(0,L)===period,le=ym.slice(0,L)<=period;
+    if(metric==='bal'?le:inP){i+=c.i;o+=c.o;ti+=c.ti;to+=c.to}
+  });
+  return metric==='in'?i:metric==='out'?o:i-o+ti-to;
+}
+function nice(lo,hi){
+  if(hi<=lo)hi=lo+1;
+  var raw=(hi-lo)/4,mag=Math.pow(10,Math.floor(Math.log(raw)/Math.LN10)),r=raw/mag;
+  var step=(r<=1?1:r<=2?2:r<=2.5?2.5:r<=5?5:10)*mag;
+  var a=Math.floor(lo/step+1e-9)*step,b=Math.ceil(hi/step-1e-9)*step,t=[];
+  for(var v=a;v<=b+step/2;v+=step)t.push(Math.round(v*100)/100);
+  return {lo:a,hi:b,ticks:t};
+}
+function lineChart(labels,series,aria){
+  var W=360,H=214,L=46,R=14,T=12,B=28,n=labels.length,vals=[0],i;
+  series.forEach(function(se){se.vals.forEach(function(v){vals.push(v)})});
+  var sc=nice(Math.min.apply(null,vals),Math.max.apply(null,vals));
+  function X(k){return L+(W-L-R)*(n>1?k/(n-1):.5)}
+  function Y(v){return T+(H-T-B)*(1-(v-sc.lo)/(sc.hi-sc.lo))}
+  var o='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+esc(aria)+'">';
+  sc.ticks.forEach(function(v){
+    o+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+Y(v)+'" y2="'+Y(v)+'" stroke="var(--line)" stroke-width="'+(v===0?1.4:1)+'"/><text x="'+(L-6)+'" y="'+(Y(v)+3.5)+'" text-anchor="end" font-size="10" fill="var(--muted)">'+short(v)+'</text>';
+  });
+  var every=Math.max(1,Math.ceil(n/7));
+  for(i=0;i<n;i++)if(i%every===0||i===n-1&&(n-1)%every>=every/2)o+='<text x="'+X(i)+'" y="'+(H-9)+'" text-anchor="middle" font-size="10" fill="var(--muted)">'+esc(labels[i])+'</text>';
+  series.forEach(function(se){
+    var pts=se.vals.map(function(v,k){return X(k)+','+Y(v)});
+    if(se.area&&n>1)o+='<path d="M'+X(0)+','+Y(0)+' L'+pts.join(' L')+' L'+X(n-1)+','+Y(0)+'Z" fill="'+se.color+'" opacity=".16"/>';
+    o+='<polyline points="'+pts.join(' ')+'" fill="none" stroke="'+se.color+'" stroke-width="'+(se.dash?1.8:2.4)+'" stroke-linejoin="round" stroke-linecap="round"'+(se.dash?' stroke-dasharray="5 4" opacity=".8"':'')+'/>';
+    se.vals.forEach(function(v,k){
+      var last=k===n-1;
+      if(se.dash&&!last)return;
+      if(n<=13||last)o+='<circle cx="'+X(k)+'" cy="'+Y(v)+'" r="'+(last?4.2:2.8)+'" fill="'+se.color+'" stroke="var(--surface)" stroke-width="1.5"><title>'+esc(se.name)+' · '+esc(labels[k])+': '+fmt(v)+'</title></circle>';
+    });
+  });
+  return o+'</svg>';
+}
+function trendPoints(){
+  var pts=[],i;
+  if(ui.rng==='1m'){
+    var m=ui.month,t=today(),n=daysIn(m);if(mk(t)===m)n=+t.slice(8);
+    for(i=1;i<=n;i++)pts.push({k:m+'-'+pad(i),l:''+i,d:1});
+  }else{
+    var c={'3m':3,'6m':6,'9m':9,'12m':12}[ui.rng]||6;
+    for(i=c-1;i>=0;i--){var mm=shift(ui.month,-i);pts.push({k:mm,l:'T'+(+mm.slice(5)),d:0})}
+  }
+  return pts;
+}
+function inPt(t,pt){return pt.d?t.date===pt.k:mk(t.date)===pt.k}
+function perPt(id,pt){
+  var r={i:0,o:0,ti:0,to:0};
+  S.tx.forEach(function(t){
+    if(!inPt(t,pt))return;
+    if(t.type==='income'){r.i+=(t.split||{})[id]||0}
+    else if(t.type==='transfer'){if(t.to===id)r.ti+=t.amount;if(t.from===id)r.to+=t.amount}
+    else if(t.jar===id)r.o+=t.amount;
+  });
+  return r;
+}
+function cumPt(id,pt){
+  var end=pt.d?pt.k:pt.k+'-31',r={i:0,b:0};
+  S.tx.forEach(function(t){
+    if(t.date>end)return;
+    if(t.type==='income'){var v=(t.split||{})[id]||0;r.i+=v;r.b+=v}
+    else if(t.type==='transfer'){if(t.to===id){r.i+=t.amount;r.b+=t.amount}if(t.from===id)r.b-=t.amount}
+    else if(t.jar===id)r.b-=t.amount;
+  });
+  return r;
+}
+function trendSection(){
+  var pts=trendPoints(),labels=pts.map(function(p){return p.l});
+  var RG=[['1m','1 tháng'],['3m','3 tháng'],['6m','6 tháng'],['9m','9 tháng'],['12m','1 năm']];
+  var chips='<div class="chips">'+RG.map(function(x){return '<button class="chip" data-a="rg" data-r="'+x[0]+'" aria-pressed="'+(ui.rng===x[0])+'">'+x[1]+'</button>'}).join('')+'</div>';
+  var span=ui.rng==='1m'?mlabel(ui.month):(pts.length?mlabel(pts[0].k).replace('Tháng ','T')+' → '+mlabel(pts[pts.length-1].k).replace('Tháng ','T'):'');
+  // chart A
+  var ser=[],leg='';
+  S.jars.forEach(function(j){
+    var vals=pts.map(function(p){return perPt(j.id,p).o}),tot=vals.reduce(function(a,b){return a+b},0);
+    if(tot<=0)return;
+    var on=!ui.hid[j.id];
+    leg+='<button class="chip" data-a="hj" data-jar="'+j.id+'" aria-pressed="'+on+'" style="--c:'+j.color+'"><i></i>'+esc(j.name)+' · '+short(tot)+'</button>';
+    if(on)ser.push({name:j.name,color:j.color,vals:vals});
+  });
+  var A='<div class="card chartc"><div class="ttl"><b>Chi tiêu theo hũ</b><span>'+(ui.rng==='1m'?'Chi mỗi ngày':'Chi mỗi tháng')+' · '+span+'</span></div>'+
+   (leg?(ser.length?lineChart(labels,ser,'Biểu đồ đường chi tiêu theo hũ'):'<p class="hint" style="padding:30px 10px;text-align:center">Đang ẩn hết các hũ. Chạm tên hũ để hiện lại.</p>')+'<div class="chips" style="padding:8px 8px 0">'+leg+'</div>':'<p class="hint" style="padding:30px 10px;text-align:center">Chưa có chi tiêu trong khoảng thời gian này.</p>')+'</div>';
+  // chart B
+  if(!S.jars.some(function(j){return j.id===ui.gj}))ui.gj=S.jars[0].id;
+  var g=jar(ui.gj),bal=[],cin=[],sumI=0,sumO=0;
+  pts.forEach(function(p,k){var c=cumPt(g.id,p),pp=perPt(g.id,p);bal.push(c.b);cin.push(c.i);sumI+=pp.i+pp.ti;sumO+=pp.o+pp.to});
+  var open=bal.length?bal[0]-(function(){var q=perPt(g.id,pts[0]);return q.i-q.o+q.ti-q.to})():0,end=bal.length?bal[bal.length-1]:0,gr=end-open;
+  var gchips='<div class="chips">'+S.jars.map(function(j){return '<button class="chip" data-a="gj" data-jar="'+j.id+'" aria-pressed="'+(ui.gj===j.id)+'" style="--c:'+j.color+'"><i></i>'+esc(j.name)+'</button>'}).join('')+'</div>';
+  var B='<div class="card chartc"><div class="ttl"><b>Tăng trưởng hũ '+esc(g.name)+'</b><span>Nét đậm: số dư · nét đứt: tổng tiền vào dồn · '+span+'</span></div>'+
+   (sumI+sumO>0||end!==0?lineChart(labels,[{name:'Tổng tiền vào',color:'var(--muted)',vals:cin,dash:1},{name:'Số dư '+g.name,color:g.color,vals:bal,area:1}],'Biểu đồ tăng trưởng hũ '+g.name):'<p class="hint" style="padding:30px 10px;text-align:center">Hũ này chưa có phát sinh trong khoảng thời gian này.</p>')+
+   '<div class="stats3" style="padding:10px 8px 4px"><div><span>Số dư cuối kỳ</span><b>'+fmt(end)+'</b></div><div><span>Tăng trong kỳ</span><b style="color:'+(gr>=0?'var(--good)':'var(--bad)')+'">'+(gr>=0?'+':'−')+fmt(Math.abs(gr))+(open>0?' ('+(gr>=0?'+':'−')+Math.abs(Math.round(gr/open*100))+'%)':'')+'</b></div><div><span>Vào / Ra</span><b>+'+short(sumI)+' / −'+short(sumO)+'</b></div></div></div>';
+  return '<div class="sec"><h2>Biểu đồ đường</h2></div>'+chips+A+'<div class="sec" style="margin-top:16px"><h2>Tăng trưởng từng hũ</h2></div>'+gchips+B;
+}
+function sumSection(){
+  var a=aggAll(),yrs=[],cy=+today().slice(0,4),y0=cy,y1=cy,k;
+  for(k in a){var y=+k.slice(0,4);if(y<y0)y0=y;if(y>y1)y1=y}
+  if(!ui.sumYear)ui.sumYear=cy;
+  var mt=ui.sumMetric,mode=ui.sumMode,rows=[],periods=[];
+  if(mode==='month'){for(var m=1;m<=12;m++)periods.push({k:ui.sumYear+'-'+pad(m),l:'Tháng '+m})}
+  else{for(var y=y0;y<=y1;y++)periods.push({k:''+y,l:'Năm '+y})}
+  function cell(v){return '<td class="'+(mt==='net'||mt==='bal'?(v>0?'pos':v<0?'neg':'zero'):(v===0?'zero':''))+'">'+(v===0?'–':new Intl.NumberFormat('vi-VN').format(Math.round(v)))+'</td>'}
+  var head='<th></th>'+S.jars.map(function(j){return '<th>'+esc(j.icon)+'<br>'+esc(j.name)+'</th>'}).join('')+'<th>Tổng</th>';
+  var body=periods.map(function(p){
+    var tot=0;
+    var tds=S.jars.map(function(j){var v=pval(a,p.k,j.id,mt);tot+=v;return cell(v)}).join('');
+    return '<tr><td>'+p.l+'</td>'+tds+cell(tot).replace('<td','<td style="font-weight:800"')+'</tr>';
+  }).join('');
+  var foot='';
+  if(mt!=='bal'){
+    var gt=0,tds=S.jars.map(function(j){var v=0;periods.forEach(function(p){v+=pval(a,p.k,j.id,mt)});gt+=v;return '<td>'+(v===0?'–':new Intl.NumberFormat('vi-VN').format(Math.round(v)))+'</td>'}).join('');
+    foot='<tfoot><tr><td>'+(mode==='month'?'Cả năm '+ui.sumYear:'Tất cả')+'</td>'+tds+'<td>'+new Intl.NumberFormat('vi-VN').format(Math.round(gt))+'</td></tr></tfoot>';
+  }
+  var metrics=[['net','Còn lại (nạp − chi)'],['in','Đã nạp'],['out','Đã chi'],['bal','Số dư lũy kế']];
+  var sub={net:'Tiết kiệm được trong từng kỳ = tiền nạp trừ tiền chi, đã tính cả chuyển hũ.',in:'Tổng tiền đã nạp vào từng hũ (không tính chuyển hũ).',out:'Tổng tiền đã chi từ từng hũ (không tính chuyển hũ).',bal:'Số dư của hũ tính dồn từ đầu đến hết kỳ đó.'}[mt];
+  return '<div class="sec"><h2>Tổng kết từng hũ</h2></div>'+
+   '<div class="tabs" style="margin-bottom:10px"><button data-a="sm" data-m="month" aria-selected="'+(mode==='month')+'">Theo tháng</button><button data-a="sm" data-m="year" aria-selected="'+(mode==='year')+'">Theo năm</button></div>'+
+   (mode==='month'?'<div class="monthnav" style="justify-content:center;margin-bottom:8px"><button data-a="sy" data-d="-1" aria-label="Năm trước">‹</button><b>Năm '+ui.sumYear+'</b><button data-a="sy" data-d="1" aria-label="Năm sau">›</button></div>':'')+
+   '<div class="chips">'+metrics.map(function(x){return '<button class="chip" data-a="sx" data-x="'+x[0]+'" aria-pressed="'+(mt===x[0])+'">'+x[1]+'</button>'}).join('')+'</div>'+
+   '<div class="card tbl"><table><thead><tr>'+head+'</tr></thead><tbody>'+body+'</tbody>'+foot+'</table></div><p class="hint" style="margin:8px 4px 0">'+sub+' Đơn vị: đồng. Vuốt ngang để xem đủ cột.</p>';
 }
 function viewStat(){
   var st=jarStats(ui.month),t=today(),isCur=mk(t)===ui.month;
@@ -397,8 +587,8 @@ function viewStat(){
     return '<div class="col" title="'+mlabel(x.m)+': thu '+fmt(x.inc)+', chi '+fmt(x.sp)+'"><div class="pair"><i class="i1" style="height:'+(x.inc/mx*100)+'%"></i><i class="i2" style="height:'+(x.sp/mx*100)+'%"></i></div><span>T'+(+x.m.slice(5))+'</span></div>';
   }).join('')+'</div><div class="legend"><span><b style="background:var(--line)"></b>Thu</span><span><b style="background:var(--accent)"></b>Chi</span><span style="margin-left:auto">Cao nhất '+fmt(mx)+'</span></div>';
   return topbar()+'<h1 class="view-title">Thống kê</h1>'+
-   '<div class="stats3" style="margin-bottom:6px"><div class="card" style="padding:12px"><span class="hint">Tổng chi</span><b style="display:block;font-size:13.5px;white-space:nowrap">'+fmt(st.t.spent)+'</b></div><div class="card" style="padding:12px"><span class="hint">Chi TB/ngày</span><b style="display:block;font-size:13.5px;white-space:nowrap">'+fmt(st.t.spent/Math.max(1,days))+'</b></div><div class="card" style="padding:12px"><span class="hint">Tiết kiệm + đầu tư</span><b style="display:block;font-size:13.5px;white-space:nowrap">'+fmt((st.j['tiet-kiem']?st.j['tiet-kiem'].inc:0)+(st.j['tu-do']?st.j['tu-do'].inc:0))+'</b></div></div>'+
-   '<div class="sec"><h2>Chi theo từng hũ</h2></div><div class="card bars">'+bars+'</div>'+
+   '<div class="stats3" style="margin-bottom:6px"><div class="card" style="padding:12px"><span class="hint">Tổng chi</span><b style="display:block;font-size:13.5px;overflow-wrap:anywhere">'+fmt(st.t.spent)+'</b></div><div class="card" style="padding:12px"><span class="hint">Chi TB/ngày</span><b style="display:block;font-size:13.5px;overflow-wrap:anywhere">'+fmt(st.t.spent/Math.max(1,days))+'</b></div><div class="card" style="padding:12px"><span class="hint">Tiết kiệm + đầu tư</span><b style="display:block;font-size:13.5px;overflow-wrap:anywhere">'+fmt((st.j['tiet-kiem']?st.j['tiet-kiem'].inc:0)+(st.j['tu-do']?st.j['tu-do'].inc:0))+'</b></div></div>'+
+   trendSection()+sumSection()+'<div class="sec"><h2>Chi theo từng hũ</h2></div><div class="card bars">'+bars+'</div>'+
    '<div class="sec"><h2>6 tháng gần nhất</h2></div><div class="card">'+cols+'</div>';
 }
 function viewSet(){
@@ -411,7 +601,7 @@ function viewSet(){
    '<div class="sec" style="margin-top:6px"><h2>Tỷ lệ chia hũ</h2><button data-a="preset">Về chuẩn 55/10/10/10/10/5</button></div>'+
    '<div class="card set">'+rows+'<div class="tot'+(P!==100?' bad':'')+'" id="tot"><span>Tổng</span><span>'+P+'%'+(P!==100?' (cần 100%)':'')+'</span></div></div>'+
    '<p class="hint" style="margin:8px 4px">Đổi tỷ lệ chỉ áp dụng cho khoản thu mới. Các khoản thu đã ghi giữ nguyên cách chia cũ.</p>'+
-   '<div class="card set" style="margin-top:14px"><div class="tog"><div>Dồn số dư sang tháng sau<small>Tiền còn lại trong hũ được cộng vào tháng kế tiếp</small></div><button class="sw" role="switch" aria-checked="'+S.carry+'" data-a="carry" aria-label="Dồn số dư"></button></div></div>'+
+   '<div class="card set" style="margin-top:14px"><div class="f" style="padding:12px 0"><label for="ref">Thu nhập chuẩn mỗi tháng (để tính mực nước)</label><input class="in-t" id="ref" inputmode="numeric" placeholder="Tự động: '+fmt(refIncome())+'" value="'+(S.ref?fmtIn(S.ref):'')+'"><span class="hint">Hũ đầy khi số dư bằng đúng phần của hũ trong khoản này. Nạp tiền thì nước dâng, chi tiền thì nước hạ.</span></div><div class="tog"><div>Dồn số dư sang tháng sau<small>Tiền còn lại trong hũ được cộng vào tháng kế tiếp</small></div><button class="sw" role="switch" aria-checked="'+S.carry+'" data-a="carry" aria-label="Dồn số dư"></button></div></div>'+
    '<div class="sec"><h2>Dữ liệu &amp; cài đặt app</h2></div><div class="card stack">'+inst+
    '<button class="btn ghost block" data-a="export">Xuất bản sao lưu (.json)</button><button class="btn ghost block" data-a="copy">Sao chép dữ liệu vào bộ nhớ tạm</button><button class="btn ghost block" data-a="import">Nhập từ bản sao lưu</button>'+
    (ui.resetStep?'<button class="btn danger block" data-a="reset">Bấm lần nữa để xóa toàn bộ</button>':'<button class="btn ghost block" data-a="reset" style="color:var(--bad)">Xóa toàn bộ dữ liệu</button>')+
@@ -421,25 +611,31 @@ function render(){
   renderNav();
   var v=ui.view,html=v==='home'?viewHome():v==='hist'?viewHist():v==='stat'?viewStat():viewSet();
   document.getElementById('app').innerHTML=html;
+  animateJars();
 }
 
 /* ---------- sheet ---------- */
 function openSheet(o){
-  ui.sheet={type:o.type||'expense',jar:o.jar||S.jars[0].id,date:today()};
+  var fr=o.from||o.jar||S.jars[0].id,to=S.jars.filter(function(j){return j.id!==fr})[0];
+  ui.sheet={type:o.type||'expense',jar:o.jar||S.jars[0].id,target:o.target||'auto',from:fr,to:to?to.id:fr,date:today()};
   drawSheet('',''); setTimeout(function(){var a=document.getElementById('amt');if(a)a.focus()},60);
 }
 function drawSheet(amount,note){
   var s=ui.sheet,st=jarStats(mk(s.date));
   var h='<div class="ov" data-a="closebg"><form class="sheet" id="form" role="dialog" aria-modal="true" aria-label="Ghi giao dịch">'+
-   '<h2>Ghi giao dịch</h2><div class="tabs" role="tablist"><button type="button" role="tab" data-a="stype" data-t="expense" aria-selected="'+(s.type==='expense')+'">Chi tiêu</button><button type="button" role="tab" data-a="stype" data-t="income" aria-selected="'+(s.type==='income')+'">Thu nhập</button></div>'+
+   '<h2>Ghi giao dịch</h2><div class="tabs" role="tablist" style="grid-template-columns:repeat(3,1fr)"><button type="button" role="tab" data-a="stype" data-t="expense" aria-selected="'+(s.type==='expense')+'">Chi tiêu</button><button type="button" role="tab" data-a="stype" data-t="income" aria-selected="'+(s.type==='income')+'">Thu nhập</button><button type="button" role="tab" data-a="stype" data-t="transfer" aria-selected="'+(s.type==='transfer')+'">Chuyển hũ</button></div>'+
    '<div class="f"><label for="amt">Số tiền (đ)</label><input class="in-t money" id="amt" inputmode="numeric" autocomplete="off" placeholder="0" value="'+esc(amount)+'"></div>'+
-   '<div class="quick">'+(s.type==='income'?[5e6,10e6,15e6,20e6,30e6]:[20e3,50e3,100e3,200e3,500e3]).map(function(n){return '<button type="button" data-a="q" data-n="'+n+'">+'+short(n)+'</button>'}).join('')+'</div>';
-  if(s.type==='expense'){
+   '<div class="quick">'+(s.type==='income'?[5e6,10e6,15e6,20e6,30e6]:s.type==='transfer'?[100e3,500e3,1e6,2e6]:[20e3,50e3,100e3,200e3,500e3]).map(function(n){return '<button type="button" data-a="q" data-n="'+n+'">+'+short(n)+'</button>'}).join('')+(s.type==='transfer'?'<button type="button" data-a="qall">Cả số dư hũ nguồn</button>':'')+'</div>';
+  if(s.type==='transfer'){
+    h+=transferPickers(s,st);
+  }else if(s.type==='expense'){
     h+='<div class="f"><label>Lấy từ hũ</label><div class="pick">'+S.jars.map(function(j){
       return '<button type="button" data-a="pj" data-jar="'+j.id+'" aria-pressed="'+(s.jar===j.id)+'"><span>'+j.icon+'</span>'+esc(j.name)+'<small>Còn '+short(st.j[j.id].bal)+'</small></button>';
     }).join('')+'</div></div>';
   }else{
-    h+='<div class="split" id="splitBox"></div>';
+    h+='<div class="f"><label>Nạp vào</label><div class="pick"><button type="button" data-a="pt" data-t="auto" aria-pressed="'+(s.target==='auto')+'"><span>🏺</span>Chia 6 hũ<small>theo tỷ lệ %</small></button>'+S.jars.map(function(j){
+      return '<button type="button" data-a="pt" data-t="'+j.id+'" aria-pressed="'+(s.target===j.id)+'"><span>'+j.icon+'</span>'+esc(j.name)+'<small>chỉ hũ này</small></button>';
+    }).join('')+'</div></div><div class="split" id="splitBox"></div>';
   }
   h+='<div class="f"><label for="note">Ghi chú</label><input class="in-t" id="note" placeholder="'+(s.type==='income'?'Ví dụ: Lương tháng '+(+s.date.slice(5,7)):'Ví dụ: Cà phê, tiền điện')+'" value="'+esc(note)+'"></div>'+
    '<div class="f"><label for="date">Ngày</label><input class="in-t" id="date" type="date" value="'+s.date+'"></div>'+
@@ -447,25 +643,69 @@ function drawSheet(amount,note){
   document.getElementById('sheetRoot').innerHTML=h;
   if(s.type==='income')updSplit();
 }
+function transferPickers(s,st){
+  function grid(act,sel){return '<div class="pick">'+S.jars.map(function(j){
+    return '<button type="button" data-a="'+act+'" data-jar="'+j.id+'" aria-pressed="'+(sel===j.id)+'"><span>'+esc(j.icon)+'</span>'+esc(j.name)+'<small>Còn '+short(st.j[j.id].bal)+'</small></button>';
+  }).join('')+'</div>'}
+  return '<div class="f"><label>Từ hũ</label>'+grid('pf',s.from)+'</div><div class="f"><label>Sang hũ</label>'+grid('pto',s.to)+'</div>';
+}
+function redrawSheet(){
+  var d=document.getElementById('date');if(d&&d.value)ui.sheet.date=d.value;
+  drawSheet(document.getElementById('amt').value,document.getElementById('note').value);
+}
 function parseAmt(v){return +String(v||'').replace(/\D/g,'')||0}
 function fmtIn(n){return n?String(n).replace(/\B(?=(\d{3})+(?!\d))/g,'.'):''}
 function updSplit(){
   var b=document.getElementById('splitBox');if(!b)return;
   var a=parseAmt(document.getElementById('amt').value);
   if(!a){b.innerHTML='<div><span>Nhập số tiền để xem cách chia vào các hũ</span></div>';return}
+  var tg=ui.sheet.target;
+  if(tg!=='auto'){b.innerHTML='<div><span>'+jar(tg).icon+' '+esc(jar(tg).name)+'</span><b>+'+fmt(a)+'</b></div>';return}
   var sp=split(a);
   b.innerHTML=S.jars.map(function(j){return '<div><span>'+j.icon+' '+esc(j.name)+' ('+j.pct+'%)</span><b>'+fmt(sp[j.id])+'</b></div>'}).join('');
+}
+function openJar(id){ui.sheet={kind:'jar',jar:id};drawJar()}
+function drawJar(){
+  var id=ui.sheet.jar,j=jar(id),st=jarStats(ui.month).j[id],lv=jarLevel(j,st.bal),items=[];
+  S.tx.forEach(function(t){
+    if(mk(t.date)!==ui.month)return;
+    if(t.type==='income'){var v=(t.split||{})[id];if(v)items.push({d:t.date,id:t.id,n:t.note||'Thu nhập',v:v,i:1,s:'Nạp vào hũ'})}
+    else if(t.type==='transfer'){
+      if(t.to===id)items.push({d:t.date,id:t.id,n:t.note||('Từ '+jar(t.from).name),v:t.amount,i:1,x:1,s:'Nhận từ '+jar(t.from).name});
+      else if(t.from===id)items.push({d:t.date,id:t.id,n:t.note||('Sang '+jar(t.to).name),v:t.amount,i:0,x:1,s:'Chuyển sang '+jar(t.to).name});
+    }
+    else if(t.jar===id)items.push({d:t.date,id:t.id,n:t.note||j.name,v:t.amount,i:0,s:'Chi từ hũ'});
+  });
+  items.sort(function(a,b){return a.d<b.d?1:a.d>b.d?-1:(a.id<b.id?1:-1)});
+  var rows=items.length?'<div class="card list">'+items.map(function(x){
+    return '<div class="row"><div class="ico" style="'+(x.i?'background:color-mix(in srgb,var(--good) 18%,transparent)':'')+'">'+(x.x?'⇄':x.i?'⬆️':'⬇️')+'</div><div class="tx"><b>'+esc(x.n)+'</b><span>'+esc(x.s)+' · '+dlabel(x.d)+'</span></div><div class="amt'+(x.i?' in':'')+'">'+(x.i?'+':'−')+fmt(x.v)+'</div></div>';
+  }).join('')+'</div>':'<div class="card empty"><p>Chưa có khoản nạp, chi hoặc chuyển nào trong '+mlabel(ui.month).toLowerCase()+'.</p></div>';
+  var net=st.tin-st.tout;
+  document.getElementById('sheetRoot').innerHTML='<div class="ov" data-a="closebg"><div class="sheet" role="dialog" aria-modal="true" aria-label="Chi tiết hũ '+esc(j.name)+'">'+
+   '<div style="display:flex;align-items:center;gap:12px"><div class="jw" style="margin:0;transform:scale(.8);transform-origin:left center;width:46px">'+jarSVG(j.color,0,lv)+'<span class="em">'+esc(j.icon)+'</span></div><div style="min-width:0"><h2>'+esc(j.name)+' · '+j.pct+'%</h2><div class="big" style="font-size:24px;font-weight:800;'+(st.bal<0?'color:var(--bad)':'')+'">'+fmt(st.bal)+'</div></div></div>'+
+   '<div class="lvl"><span>Mực nước</span><div class="track"><i style="width:'+Math.round(lv*100)+'%;--c:'+j.color+'"></i></div><b>'+Math.round(lv*100)+'%</b></div>'+
+   '<div class="stats3" style="grid-template-columns:repeat(2,minmax(0,1fr))"><div><span>Đầu kỳ</span><b>'+fmt(st.opening)+'</b></div><div><span>Đã nạp</span><b style="color:var(--good)">+'+fmt(st.inc)+'</b></div><div><span>Đã chi</span><b style="color:var(--bad)">−'+fmt(st.spent)+'</b></div><div><span>Chuyển hũ (ròng)</span><b style="color:'+(net>0?'var(--good)':net<0?'var(--bad)':'inherit')+'">'+(net>0?'+':net<0?'−':'')+fmt(Math.abs(net))+'</b></div></div>'+
+   '<div class="btns" style="margin:0"><button class="btn" data-a="spend" data-jar="'+id+'" style="flex:1">− Chi từ hũ</button><button class="btn ghost" data-a="topup" data-jar="'+id+'" style="flex:1">+ Nạp vào hũ</button><button class="btn ghost" data-a="xfer" data-jar="'+id+'" style="flex:1 1 100%">⇄ Chuyển sang hũ khác</button></div>'+
+   rows+'<button class="btn ghost block" data-a="close">Đóng</button></div></div>';
+  animateJars();
 }
 function closeSheet(){ui.sheet=null;document.getElementById('sheetRoot').innerHTML=''}
 function submitSheet(){
   var s=ui.sheet,a=parseAmt(document.getElementById('amt').value),note=document.getElementById('note').value.trim(),date=document.getElementById('date').value||today();
   if(!a){document.getElementById('amt').focus();toast('Nhập số tiền trước khi lưu');return}
+  if(s.type==='transfer'){
+    if(s.from===s.to){toast('Chọn hai hũ khác nhau');return}
+    var fb=jarStats(mk(date)).j[s.from].bal;
+    if(a>fb){toast('Hũ '+jar(s.from).name+' chỉ còn '+fmt(Math.max(0,fb)));return}
+    S.tx.push({id:uid(),type:'transfer',from:s.from,to:s.to,amount:a,note:note,date:date});save();
+    ui.month=mk(date);closeSheet();render();toast('Đã chuyển '+fmt(a)+' từ '+jar(s.from).name+' sang '+jar(s.to).name+'.');return;
+  }
   var t={id:uid(),type:s.type,amount:a,note:note,date:date};
-  if(s.type==='income')t.split=split(a);else t.jar=s.jar;
+  if(s.type==='income'){if(s.target==='auto')t.split=split(a);else{t.split={};t.split[s.target]=a;t.target=s.target}}else t.jar=s.jar;
   S.tx.push(t);save();
   var over='';
   if(s.type==='expense'){var b=jarStats(mk(date)).j[s.jar].bal;if(b<0)over=' Hũ '+jar(s.jar).name+' đã vượt '+fmt(-b)+'.'}
-  ui.month=mk(date);closeSheet();render();toast((s.type==='income'?'Đã chia '+fmt(a)+' vào '+S.jars.length+' hũ.':'Đã ghi chi '+fmt(a)+'.')+over);
+  ui.month=mk(date);closeSheet();render();toast((s.type==='income'?(s.target==='auto'?'Đã chia '+fmt(a)+' vào '+S.jars.length+' hũ.':'Đã nạp '+fmt(a)+' vào hũ '+jar(s.target).name+'.'):'Đã trừ '+fmt(a)+' khỏi hũ '+jar(s.jar).name+'.')+over);
 }
 
 /* ---------- toast ---------- */
@@ -506,8 +746,16 @@ document.addEventListener('click',function(e){
   if(a==='nav'){ui.view=el.dataset.v;ui.resetStep=0;render();window.scrollTo(0,0)}
   else if(a==='mon'){ui.month=shift(ui.month,+el.dataset.d);render()}
   else if(a==='add'){openSheet({jar:el.dataset.jar,type:el.dataset.type})}
+  else if(a==='jar'){openJar(el.dataset.jar)}
+  else if(a==='spend'){openSheet({jar:el.dataset.jar,type:'expense'})}
+  else if(a==='topup'){openSheet({jar:el.dataset.jar,type:'income',target:el.dataset.jar})}
+  else if(a==='pt'){ui.sheet.target=el.dataset.t;[].forEach.call(document.querySelectorAll('[data-a=pt]'),function(b){b.setAttribute('aria-pressed',b.dataset.t===ui.sheet.target)});updSplit()}
   else if(a==='close'){closeSheet()}
-  else if(a==='stype'){var am=document.getElementById('amt').value,nt=document.getElementById('note').value;ui.sheet.type=el.dataset.t;drawSheet(am,nt);document.getElementById('amt').focus()}
+  else if(a==='stype'){ui.sheet.type=el.dataset.t;redrawSheet();document.getElementById('amt').focus()}
+  else if(a==='pf'){var o1=ui.sheet.from;ui.sheet.from=el.dataset.jar;if(ui.sheet.to===el.dataset.jar)ui.sheet.to=o1;redrawSheet()}
+  else if(a==='pto'){var o2=ui.sheet.to;ui.sheet.to=el.dataset.jar;if(ui.sheet.from===el.dataset.jar)ui.sheet.from=o2;redrawSheet()}
+  else if(a==='qall'){var dv=document.getElementById('date').value||today(),bb=jarStats(mk(dv)).j[ui.sheet.from].bal;var ia=document.getElementById('amt');ia.value=fmtIn(Math.max(0,Math.floor(bb)))}
+  else if(a==='xfer'){openSheet({type:'transfer',from:el.dataset.jar})}
   else if(a==='pj'){ui.sheet.jar=el.dataset.jar;[].forEach.call(document.querySelectorAll('.pick button'),function(b){b.setAttribute('aria-pressed',b.dataset.jar===ui.sheet.jar)})}
   else if(a==='q'){var i=document.getElementById('amt');i.value=fmtIn(parseAmt(i.value)+(+el.dataset.n));updSplit()}
   else if(a==='del'){
@@ -515,6 +763,12 @@ document.addEventListener('click',function(e){
     if(idx>-1){lastDel=S.tx.splice(idx,1)[0];save();render();toast('Đã xóa giao dịch',true)}
   }
   else if(a==='undo'){if(lastDel){S.tx.push(lastDel);lastDel=null;save();render();document.getElementById('toastRoot').innerHTML=''}}
+  else if(a==='rg'){ui.rng=el.dataset.r;render()}
+  else if(a==='hj'){ui.hid[el.dataset.jar]=!ui.hid[el.dataset.jar];render()}
+  else if(a==='gj'){ui.gj=el.dataset.jar;render()}
+  else if(a==='sm'){ui.sumMode=el.dataset.m;render()}
+  else if(a==='sy'){ui.sumYear=(ui.sumYear||+today().slice(0,4))+(+el.dataset.d);render()}
+  else if(a==='sx'){ui.sumMetric=el.dataset.x;render()}
   else if(a==='flt'){ui.filter=el.dataset.f;render()}
   else if(a==='demo'){demo()}
   else if(a==='preset'){S.jars=clone(PRESET);save();render();toast('Đã về tỷ lệ 6 hũ chuẩn')}
@@ -537,6 +791,7 @@ document.addEventListener('click',function(e){
 document.addEventListener('input',function(e){
   var t=e.target;
   if(t.id==='amt'){var c=t.value.length-t.selectionStart;t.value=fmtIn(parseAmt(t.value));try{var p=t.value.length-c;t.setSelectionRange(p,p)}catch(x){}updSplit();return}
+  if(t.id==='ref'){var n=parseAmt(t.value);t.value=fmtIn(n);S.ref=n||0;save();return}
   if(t.dataset&&t.dataset.k){
     var j=S.jars[+t.dataset.i],k=t.dataset.k;
     j[k]=k==='pct'?Math.max(0,Math.min(100,+t.value||0)):t.value;
